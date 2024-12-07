@@ -10,7 +10,13 @@ def init_mt5():
         logging.error("MetaTrader5 initialization failed. Error code: %s", error_code)
         return False
     logging.info("Connected to MetaTrader5")
+    account_info()
     return True
 
-def fetch_test_data():
-    pass
+def account_info():
+    try:
+        print("Name:", mt5.account_info().name)
+        print("Balance:", mt5.account_info().balance)
+        logging.info("Successfully logged MT5 account info")
+    except Exception as e:
+        logging.error("Couldn't log MT5 account info. Error %s", e)
