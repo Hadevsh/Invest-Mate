@@ -6,5 +6,5 @@ def init_logging(name="main"):
     """
     logger = logging.getLogger(__name__)
     logging.basicConfig(filename=f"{name}.log", encoding='UTF-8', level=logging.INFO, filemode='w',
-                        format="%(asctime)s %(levelname)s: %(message)s", datefmt='%I:%M:%S')
+                        format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt='%I:%M:%S')
     logger.info("Set-up logging successfully")
