@@ -1,6 +1,4 @@
-import MetaTrader5 as mt5
 import logging
-import os
 
 def init_logging(name="main"):
     """
@@ -8,5 +6,5 @@ def init_logging(name="main"):
     """
     logging.basicConfig(encoding='UTF-8', level=logging.INFO,
                        format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt='%I:%M:%S',
-                       handlers=[logging.FileHandler(f"{name}.log", mode='w', encoding='UTF-8')])
+                       handlers=[logging.FileHandler(f"src/output/{name}.log", mode='w', encoding='UTF-8')])
     logging.info("Set-up logging successfully")
