@@ -1,9 +1,9 @@
 import MetaTrader5 as mt5
-from utils.logger import logging
+import logging
 
 logger = logging.getLogger("main") # Get global logger "main.log" from main.py
 
-def init() -> bool:
+def init_mt5() -> bool:
     """
     Connects to MetaTrader5
     """
