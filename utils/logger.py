@@ -1,10 +1,22 @@
 import logging
 
-def init(name: str="main") -> None:
+def init_logger(name: str="main", file: str="data/logs/main.log", level=logging.INFO) -> None:
     """
-    Sets-up the logging library - save logs to a file
+    Sets-up a logger with a specific name and file
     """
-    logging.basicConfig(encoding='UTF-8', level=logging.INFO,
-                       format="%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt='%I:%M:%S',
-                       handlers=[logging.FileHandler(f"data/logs/{name}.log", mode='w', encoding='UTF-8')])
-    logging.info("Set-up logging successfully")
+    # Create logger
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    # File handler
+    file_handler = logging.FileHandler(file, mode='w')
+    file_handler.setLevel(level)
+
+    # Formatter
+    formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt='%I:%M:%S', )
+    file_handler.setFormatter(formatter)
+
+    if not logger.hasHandlers(): # Avoid duplicate handlers
+        logger.addHandler(file_handler)
+
+    return logger

@@ -1,11 +1,11 @@
-import utils.logger as log
-import logging
+from utils.logger import init_logger
 import utils.mt5 as mt5
 
+logger = init_logger() # Global main.log logger
+
 def main():
-    log.init()
     mt5.init()
-    logging.info("Starting program...")
+    logger.info("Starting program...")
     mt5.fetch_symbol_price()
 
 if __name__ == "__main__":
