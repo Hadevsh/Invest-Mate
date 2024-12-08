@@ -28,3 +28,19 @@ def fetch_data(symbol: str="BTCUSD", timeframe=mt5.TIMEFRAME_M30, num_candles: i
             print(df)
         else:
             logger.error(f"Failed to retrieve data. Error code: {mt5.last_error()}")
+
+        moving_average(df, 10, symbol)
+
+
+def moving_average(data_frame: pd.DataFrame, period, symbol) -> None:
+    """
+    Calculates a Simple Moving Average (SMA) over a specified period
+    Example: 10-period moving average
+    """
+    data_frame['SMA'] = data_frame['close'].rolling(window=period).mean()
+
+    # Print the data with the SMA
+    sma_data = data_frame[['time', 'close', 'SMA']].tail(20)
+    sma_data.to_csv(f"data/processed/SMA_{symbol}_{period}period.csv")
+    
+    logger.info(f"Successfully calculated SMA over {period} period")
