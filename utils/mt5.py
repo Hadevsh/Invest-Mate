@@ -9,7 +9,7 @@ def init_mt5() -> bool:
     """
     if not mt5.initialize():
         error_code = mt5.last_error()
-        logger.error("MetaTrader5 initialization failed. Error code: %s", error_code)
+        logger.error(f"MetaTrader5 initialization failed. Error code: {error_code}")
         return False
     logger.info("Connected to MetaTrader5")
     account_info()
@@ -20,9 +20,9 @@ def account_info() -> None:
     try:
         print("Name:", mt5.account_info().name)
         print("Balance:", mt5.account_info().balance)
-        logger.info("Successfully logged MT5 account info")
+        logger.info("Successfully logged MT5 account info") # Logged for testing purposes - ensures that MT5 is connected
     except Exception as e:
-        logger.error("Couldn't log MT5 account info. Error %s", e)
+        logger.error(f"Couldn't log MT5 account info. Error code: {e}")
 
 def fetch_symbol_price(symbol: str="BTCUSD") -> None:
     tick = mt5.symbol_info_tick(symbol)

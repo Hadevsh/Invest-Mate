@@ -3,8 +3,6 @@ import pandas as pd
 from datetime import datetime
 import logging
 
-from utils.mt5 import init_mt5
-
 logger = logging.getLogger("main") # Get global logger "main.log" from main.py
 
 def fetch_data(symbol: str="BTCUSD", timeframe=mt5.TIMEFRAME_M30, num_candles: int=1000) -> None:
@@ -12,24 +10,22 @@ def fetch_data(symbol: str="BTCUSD", timeframe=mt5.TIMEFRAME_M30, num_candles: i
     Retrieves historical data for a selected asset (symbol)
     timeframe * num_candles = how far back
     """
-    if init_mt5():
-        if not mt5.symbol_select(symbol, True):
-            logger.error(f"Failed to select {symbol}. Error code: {mt5.last_error()}")
+    if not mt5.symbol_select(symbol, True):
+        logger.error(f"Failed to select {symbol}. Error code: {mt5.last_error()}")
 
-        # Get historical data from the current time backward
-        rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, num_candles)
+    # Get historical data from the current time backward
+    rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, num_candles)
 
-        # Convert the result to a pandas DataFrame for easier handling
-        if rates is not None:
-            df = pd.DataFrame(rates)
-            # Convert time in seconds to a datetime format
-            df['time'] = pd.to_datetime(df['time'], unit='s')
-            logger.info(f"Successfully fetched data for {symbol}")
-            print(df)
-        else:
-            logger.error(f"Failed to retrieve data. Error code: {mt5.last_error()}")
+    # Convert the result to a pandas DataFrame for easier handling
+    if rates is not None:
+        df = pd.DataFrame(rates)
+        # Convert time in seconds to a datetime format
+        df['time'] = pd.to_datetime(df['time'], unit='s')
+        logger.info(f"Successfully fetched data for {symbol} - T{timeframe}x{num_candles}")
+    else:
+        logger.error(f"Failed to retrieve data. Error code: {mt5.last_error()}")
 
-        moving_average(df, 10, symbol)
+    moving_average(df, 10, symbol)
 
 
 def moving_average(data_frame: pd.DataFrame, period, symbol) -> None:
@@ -40,7 +36,5 @@ def moving_average(data_frame: pd.DataFrame, period, symbol) -> None:
     data_frame['SMA'] = data_frame['close'].rolling(window=period).mean()
 
     # Print the data with the SMA
-    sma_data = data_frame[['time', 'close', 'SMA']].tail(20)
-    sma_data.to_csv(f"data/processed/SMA_{symbol}_{period}period.csv")
-    
-    logger.info(f"Successfully calculated SMA over {period} period")
+    sma_data = data_frame[['time', 'close', 'SMA']].tail(20) # Last 20 positions
+    logger.info(f"Successfully calculated SMA over {period} period for {symbol}")

@@ -13,7 +13,7 @@ def init_logger(name: str="main", file: str="data/logs/main.log", level=logging.
     file_handler.setLevel(level)
 
     # Formatter
-    formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s", datefmt='%I:%M:%S', )
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(filename)s: %(message)s", datefmt='%I:%M:%S', )
     file_handler.setFormatter(formatter)
 
     if not logger.hasHandlers(): # Avoid duplicate handlers
