@@ -31,13 +31,13 @@ class Terminal:
         symbol_entry = tk.Entry(root)
         symbol_entry.grid(row=0, column=1, sticky=tk.W)
 
-        tk.Label(root, text="Start Date (YYYY-MM-DD):").grid(row=1, column=0, sticky=tk.W)
-        start_date_entry = tk.Entry(root)
-        start_date_entry.grid(row=1, column=1, sticky=tk.W)
+        tk.Label(root, text="Timeframe: ").grid(row=1, column=0, sticky=tk.W)
+        timeframe_entry = tk.Entry(root)
+        timeframe_entry.grid(row=1, column=1, sticky=tk.W)
 
-        tk.Label(root, text="End Date (YYYY-MM-DD):").grid(row=2, column=0, sticky=tk.W)
-        end_date_entry = tk.Entry(root)
-        end_date_entry.grid(row=2, column=1, sticky=tk.W)
+        tk.Label(root, text="Number of candles: ").grid(row=2, column=0, sticky=tk.W)
+        candles_num_entry = tk.Entry(root)
+        candles_num_entry.grid(row=2, column=1, sticky=tk.W)
 
         # Initial dummy chart
         dummy_data = pd.DataFrame({
@@ -55,10 +55,10 @@ class Terminal:
         # Load button
         def on_load():
             symbol = symbol_entry.get()
-            start_date = start_date_entry.get()
-            end_date = end_date_entry.get()
+            timeframe = timeframe_entry.get()
+            candles_num = candles_num_entry.get()
             # script_path = "strategy_line.py"  # Replace with dynamic selection if needed
-            self.refresh_chart(canvas, symbol, start_date, end_date)
+            self.refresh_chart(canvas, symbol, timeframe, candles_num)
 
         load_button = tk.Button(root, text="Load Data", command=on_load)
         load_button.grid(row=4, column=0, columnspan=2)
@@ -71,15 +71,17 @@ class Terminal:
         return fig, ax
     
     # Refresh chart
-    def refresh_chart(self, canvas, symbol, start_date, end_date):
+    def refresh_chart(self, canvas, symbol, timeframe, candles_num):
         try:
-            data = load_candlestick_data(symbol, start_date, end_date)
+            candles_num = int(candles_num)  # Convert to integer
+            data = load_candlestick_data(symbol, timeframe, candles_num)
+            canvas.figure.clf()  # Clear the figure
+            fig, ax = self.create_chart(data)
+            canvas.figure = fig
+            canvas.draw()
+        except ValueError as ve:
+            logger.error(f"Validation error: {ve}")
+        except RuntimeError as re:
+            logger.error(f"Runtime error: {re}")
         except Exception as e:
-            logger.error(f"Error loading data: {e}")
-            return
-
-        canvas.figure.clf()
-        fig, ax = self.create_chart(data)
-        # load_strategy(script_path, data, ax)
-        canvas.figure = fig
-        canvas.draw()
+            logger.error(f"Unexpected error: {e}")
