@@ -1,5 +1,7 @@
 import MetaTrader5 as mt5
 import logging
+import pandas as pd
+import datetime as dt
 
 logger = logging.getLogger("main") # Get global logger "main.log" from main.py
 
@@ -30,3 +32,29 @@ def fetch_symbol_price(symbol: str="BTCUSD") -> None:
         logger.error(f"Failed to retrieve current price of {symbol}")
     current_price = tick.bid
     print(f"Current price of {symbol}: {current_price}")
+
+# Fetch data from MT5
+def load_candlestick_data(symbol, start_date, end_date=None):
+    # Set default end date to today
+    if end_date is None:
+        end_date = dt.datetime.now()
+
+    # Convert start and end dates to datetime objects
+    start_date = dt.datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = pd.Timestamp(end_date)
+
+    # Request candlestick data
+    rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_H1, start_date, end_date)
+
+    if rates is None:
+        logger.error(f"Failed to retrieve data for {symbol}. Error: {mt5.last_error()}")
+        return None
+
+    # Convert to DataFrame
+    data = pd.DataFrame(rates)
+    data['time'] = pd.to_datetime(data['time'], unit='s')
+    data.set_index('time', inplace=True)
+
+    # Rename columns for mplfinance
+    data.rename(columns={"open": "Open", "high": "High", "low": "Low", "close": "Close", "tick_volume": "Volume"}, inplace=True)
+    return data
