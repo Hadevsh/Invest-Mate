@@ -1,6 +1,7 @@
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import mplfinance as mpf
+import matplotlib.pyplot as plt
 import pandas as pd
 import importlib.util
 import MetaTrader5 as mt5
@@ -64,20 +65,26 @@ class Terminal:
 
         root.mainloop()
 
-    # Chart creation function
+    # Chart creation function using Matplotlib and mplfinance
     def create_chart(self, data):
-        fig, ax = mpf.plot(data, type='candle', returnfig=True)
+        fig, ax = plt.subplots(figsize=(10, 6)) # Create a new figure and axis for each plot
+        mpf.plot(data, type='candle', ax=ax, returnfig=False) # Plot the new candlestick chart
+        ax.set_title('Candlestick Chart')
         return fig, ax
-    
-    # Refresh chart
+
+    # Refresh chart function
     def refresh_chart(self, canvas, symbol, timeframe, candles_num):
         try:
-            candles_num = int(candles_num)  # Convert to integer
-            data = load_candlestick_data(symbol, timeframe, candles_num)
-            canvas.figure.clf()  # Clear the figure
-            fig, ax = self.create_chart(data)
-            canvas.figure = fig
-            canvas.draw()
+            candles_num = int(candles_num) # Convert to integer
+            data = load_candlestick_data(symbol, timeframe, candles_num) # Load new data
+            
+            # Clear the previous chart and create a new one
+            canvas.figure.clf() # Clear the figure
+            fig, ax = self.create_chart(data) # Create the new chart
+            canvas.figure = fig # Update the canvas with the new figure
+            canvas.get_tk_widget().grid(row=3, column=0, columnspan=2, sticky="nsew")
+            canvas.draw() # Refresh the canvas with the new chart
+            
         except ValueError as ve:
             logger.error(f"Validation error: {ve}")
         except RuntimeError as re:
