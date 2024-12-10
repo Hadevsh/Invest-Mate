@@ -35,7 +35,7 @@ def fetch_symbol_price(symbol: str="BTCUSD") -> None:
     print(f"Current price of {symbol}: {current_price}")
 
 # Fetch data from MT5
-def load_candlestick_data(symbol: str, timeframe: str, candles_num: int) -> pd.DataFrame:
+def load_candlestick_data(symbol: str="BTCUSD", timeframe: str="M30", candles_num: int=100) -> pd.DataFrame:
     if not mt5.initialize():
         logger.error("Failed to initialize MT5. Ensure MetaTrader5 is running and properly configured.")
         raise RuntimeError("MT5 initialization failed.")

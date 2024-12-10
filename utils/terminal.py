@@ -19,6 +19,7 @@ class Terminal:
     def start(self):
         root = tk.Tk()
         root.title("Trading Terminal")
+        root.state('zoomed') 
 
         # Close program function
         def on_close():
@@ -40,17 +41,15 @@ class Terminal:
         candles_num_entry.grid(row=2, column=1, sticky=tk.W)
 
         # Initial dummy chart
-        dummy_data = pd.DataFrame({
-            "Open": [1, 2, 3],
-            "High": [2, 3, 4],
-            "Low": [0.5, 1.5, 2.5],
-            "Close": [1.5, 2.5, 3.5]
-        }, index=pd.date_range(start="2023-01-01", periods=3))
+        dummy_data = load_candlestick_data()
         fig, ax = self.create_chart(dummy_data)
 
         # Canvas for the chart
         canvas = FigureCanvasTkAgg(fig, master=root)
-        canvas.get_tk_widget().grid(row=3, column=0, columnspan=2)
+        canvas.get_tk_widget().grid(row=3, column=0, columnspan=2, sticky="nsew")
+        root.grid_rowconfigure(3, weight=1)
+        root.grid_columnconfigure(0, weight=1)
+        root.grid_columnconfigure(1, weight=1)
 
         # Load button
         def on_load():
