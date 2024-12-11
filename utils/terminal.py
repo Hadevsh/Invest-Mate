@@ -1,7 +1,8 @@
 import tkinter as tk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import mplfinance as mpf
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
+from matplotlib.widgets import MultiCursor
 from utils.mt5 import load_candlestick_data
 import logging
 
@@ -102,6 +103,38 @@ class Terminal:
         # Canvas for the chart
         self.canvas = FigureCanvasTkAgg(fig, master=chart_frame)
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+        # Multicursor implementation for crosshair
+        multi_cursor = MultiCursor(
+            fig.canvas, 
+            [ax], 
+            color='gray',
+            lw=0.3, 
+            horizOn=True, 
+            vertOn=True
+        )
+        fig.canvas.draw_idle()
+
+        def on_mouse_click(event):
+            if event.inaxes == ax:  # Ensure the cursor is inside the plot area
+                price = event.ydata
+                if price is not None:
+                    # Clear existing text objects by removing them
+                    for text in ax.texts:
+                        text.remove()
+
+                    # Add new text showing the current price
+                    ax.text(
+                        1.01, price, f"{price:.2f}",
+                        transform=ax.get_yaxis_transform(),
+                        fontsize=9,
+                        color="white",
+                        backgroundcolor="blue",
+                        verticalalignment="center"
+                    )
+                    fig.canvas.draw_idle()
+
+        fig.canvas.mpl_connect("button_press_event", on_mouse_click)
 
         # Toolbar frame
         toolbar_frame = tk.Frame(self.root)
