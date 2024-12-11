@@ -4,7 +4,7 @@ import pandas as pd
 import datetime as dt
 import mplfinance
 
-logger = logging.getLogger("main") # Get global logger "main.log" from main.py
+logger = logging.getLogger("main")  # Get global logger "main.log" from main.py
 
 def init_mt5() -> bool:
     """
@@ -23,7 +23,7 @@ def account_info() -> None:
     try:
         print("Name:", mt5.account_info().name)
         print("Balance:", mt5.account_info().balance)
-        logger.info("Successfully logged MT5 account info") # Logged for testing purposes - ensures that MT5 is connected
+        logger.info("Successfully logged MT5 account info")  # Logged for testing purposes - ensures that MT5 is connected
     except Exception as e:
         logger.error(f"Couldn't log MT5 account info. Error code: {e}")
 

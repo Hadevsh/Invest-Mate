@@ -16,7 +16,7 @@ def init_logger(name: str="main", file: str="data/logs/main.log", level=logging.
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(filename)s: %(message)s", datefmt='%I:%M:%S', )
     file_handler.setFormatter(formatter)
 
-    if not logger.hasHandlers(): # Avoid duplicate handlers
+    if not logger.hasHandlers():  # Avoid duplicate handlers
         logger.addHandler(file_handler)
 
     return logger

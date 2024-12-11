@@ -14,7 +14,7 @@ terminal.start()
 
 def main() -> None:
     logger.info("Starting program...")
-    # mt5.fetch_symbol_price() # Testing function - check if (ensure) MT5 is connected
+    mt5.fetch_symbol_price() # Testing function - check if (ensure) MT5 is connected
     
     averag_crossover.fetch_data()
 
