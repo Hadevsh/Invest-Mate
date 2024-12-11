@@ -42,6 +42,7 @@ class Terminal:
         # Initial dummy chart
         dummy_data = load_candlestick_data()  # Load candlestick data with default data
         fig, ax = self.create_chart(dummy_data)
+        ax.grid(True, linestyle='--', alpha=0.5)
         ax.set_title(f"BTCUSD - 100 candles (M30)")
 
         # Canvas for the chart
@@ -107,6 +108,7 @@ class Terminal:
             self.toolbar = NavigationToolbar2Tk(self.canvas, toolbar_frame)
             self.toolbar.update()
 
+            ax.grid(True, linestyle='--', alpha=0.5)
             ax.set_title(f"{symbol} - {candles_num} candles ({timeframe})")
 
             logger.info(f"Successfully updated chart for {symbol}, {candles_num} candles ({timeframe})")
