@@ -6,7 +6,6 @@ import pandas as pd
 import importlib.util
 import MetaTrader5 as mt5
 import logging
-import sys
 
 from utils.mt5 import load_candlestick_data
 
@@ -24,7 +23,7 @@ class Terminal:
 
         # Close program function
         def on_close():
-            sys.exit() # Exit the script
+            quit()
         # Handle the close event
         root.protocol("WM_DELETE_WINDOW", on_close)
 
@@ -42,7 +41,7 @@ class Terminal:
         candles_num_entry.grid(row=2, column=1, sticky=tk.W)
 
         # Initial dummy chart
-        dummy_data = load_candlestick_data()
+        dummy_data = load_candlestick_data() # Load candlestick data with default data
         fig, ax = self.create_chart(dummy_data)
 
         # Canvas for the chart
@@ -57,33 +56,44 @@ class Terminal:
             symbol = symbol_entry.get()
             timeframe = timeframe_entry.get()
             candles_num = candles_num_entry.get()
+            ax.set_title(f"{symbol} {candles_num} candles ({timeframe})")
             # script_path = "strategy_line.py"  # Replace with dynamic selection if needed
-            self.refresh_chart(canvas, symbol, timeframe, candles_num)
+            self.refresh_chart(canvas, symbol, timeframe, candles_num, ax)
 
         load_button = tk.Button(root, text="Load Data", command=on_load)
         load_button.grid(row=4, column=0, columnspan=2)
 
         root.mainloop()
 
-    # Chart creation function using Matplotlib and mplfinance
+    # Chart creation function using matplotlib
     def create_chart(self, data):
-        fig, ax = plt.subplots(figsize=(10, 6)) # Create a new figure and axis for each plot
-        mpf.plot(data, type='candle', ax=ax, returnfig=False) # Plot the new candlestick chart
-        ax.set_title('Candlestick Chart')
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        # Creatig candlestick chart
+        mpf.plot(
+            data,
+            type='candle',
+            ax=ax,
+            style='yahoo',
+            show_nontrading=False # Skip days with no data
+        )
         return fig, ax
 
     # Refresh chart function
-    def refresh_chart(self, canvas, symbol, timeframe, candles_num):
+    def refresh_chart(self, canvas, symbol, timeframe, candles_num, ax=None):
         try:
             candles_num = int(candles_num) # Convert to integer
             data = load_candlestick_data(symbol, timeframe, candles_num) # Load new data
-            
-            # Clear the previous chart and create a new one
-            canvas.figure.clf() # Clear the figure
-            fig, ax = self.create_chart(data) # Create the new chart
-            canvas.figure = fig # Update the canvas with the new figure
-            canvas.get_tk_widget().grid(row=3, column=0, columnspan=2, sticky="nsew")
-            canvas.draw() # Refresh the canvas with the new chart
+
+            # Creatig candlestick chart
+            mpf.plot(
+                data,
+                type='candle',
+                ax=ax,
+                style='yahoo',
+                show_nontrading=False # Skip days with no data
+            )
+            logger.info(f"Successfully updated chart for {symbol}, {candles_num} candles ({timeframe})")
             
         except ValueError as ve:
             logger.error(f"Validation error: {ve}")
