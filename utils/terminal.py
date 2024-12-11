@@ -29,15 +29,12 @@ class Terminal:
 
         self.root.protocol("WM_DELETE_WINDOW", on_close)
 
-        # Main layout: Create frames
-        settings_frame = tk.Frame(self.root, width=200, padx=10, pady=10)
-        settings_frame.place(x=10, y=10, relheight=1, width=250)  # Place the settings frame on the left side
-        # settings_frame.grid(row=0, column=0, sticky="ns")  # Stick to the left
-        # settings_frame.grid_propagate(False)  # Prevent frame from resizing
-
+        # Main layout: Create frames        
         self.chart_frame = chart_frame = tk.Frame(self.root)
-        chart_frame.place(x=270, y=10, relwidth=1, relheight=1)  # Place chart to the right and make it fill the rest
-        # chart_frame.grid(row=0, column=1, sticky="nsew")  # Fill remaining space
+        chart_frame.place(x=120, y=-50, relwidth=1, relheight=1)  # Place chart to the right and make it fill the rest
+
+        settings_frame = tk.Frame(self.root, width=200, padx=10, pady=10)
+        settings_frame.place(x=10, y=10, relheight=1, width=300)  # Place the settings frame on the left side
 
         # Configure row and column weights
         self.root.grid_columnconfigure(1, weight=1)
@@ -107,8 +104,8 @@ class Terminal:
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
         # Toolbar frame
-        toolbar_frame = tk.Frame(chart_frame)
-        toolbar_frame.grid(row=1, column=0, sticky="nsew")
+        toolbar_frame = tk.Frame(self.root)
+        toolbar_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
         self.toolbar = NavigationToolbar2Tk(self.canvas, toolbar_frame)
         self.toolbar.update()
 
