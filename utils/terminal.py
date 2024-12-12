@@ -6,6 +6,8 @@ from matplotlib.widgets import MultiCursor
 from utils.mt5 import load_candlestick_data
 import logging
 
+from strategies.average_crossover import plot_sma, moving_average, fetch_data
+
 logger = logging.getLogger("main")  # Get global logger "main.log" from main.py
 
 
@@ -18,6 +20,9 @@ class Terminal:
 
         self.auto_refresh = False  # Flag to track auto-refresh state
         self.refresh_interval = 120  # Default refresh interval in seconds
+
+        # TESTING - SMA STRATEGY
+        self.strategy_results = None  # Placeholder for strategy results widget
 
     def start(self):
         self.root = tk.Tk()
@@ -103,6 +108,12 @@ class Terminal:
         # Canvas for the chart
         self.canvas = FigureCanvasTkAgg(fig, master=chart_frame)
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+        data = fetch_data()
+        sma_data = moving_average(data, 10, "BTCUSD")
+        print(data)
+        print(sma_data)
+        plot_sma(ax, sma_data, "BTCUSD")
 
         # Multicursor implementation for crosshair
         multi_cursor = MultiCursor(
